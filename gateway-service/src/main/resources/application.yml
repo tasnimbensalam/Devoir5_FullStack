@@ -1,0 +1,48 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: gateway-service
+
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      routes:
+        - id: r1
+          uri: http://localhost:8002/
+          predicates:
+            - Path=/chansons/**
+          filters:
+            - StripPrefix=1
+        - id: r2
+          uri: http://localhost:8001/
+          predicates:
+            - Path=/users/**
+          filters:
+            - StripPrefix=1
+
+      globalcors: # Applies CORS to all routes in the gateway
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]': # Applies to all paths
+            allowedOrigins:
+              - "http://localhost:4200"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+  web:
+    cors:
+      mappings:
+        '/chansons/**': # Applies at the web application level for chansons
+          allowed-origins: 'http://localhost:4200'
+          allowed-methods: '*'
+          allowed-headers: '*'
+        '/users/**': # Applies at the web application level for users
+          allowed-origins: 'http://localhost:4200'
+          allowed-methods: '*'
+          allowed-headers: '*'
