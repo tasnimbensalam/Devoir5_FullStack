@@ -131,3 +131,5 @@ build/
 
 ### VS Code ###
 .vscode/
+
+node_modules/
